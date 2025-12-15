@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { makeBaseTypeOrmConfig } from './database/db-config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -18,6 +19,10 @@ import { makeBaseTypeOrmConfig } from './database/db-config';
         ...makeBaseTypeOrmConfig(process.env),
         autoLoadEntities: true,
       }),
+    }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1h' },
     }),
   ],
   controllers: [AppController],
