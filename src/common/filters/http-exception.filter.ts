@@ -7,13 +7,13 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-type ErrorResponse = {
+type HttpErrorBody = {
   message?: string | string[];
   error?: unknown;
-  [key: string]: unknown;
+  [k: string]: unknown;
 };
-const isRecord = (val: unknown): val is Record<string, unknown> =>
-  typeof val === 'object' && val !== null;
+const isObject = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null;
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -22,25 +22,24 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const req = ctx.getRequest<Request>();
     const res = ctx.getResponse<Response>();
 
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const resBody =
-      exception instanceof HttpException ? exception.getResponse() : null;
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message: string | string[] = 'Internal server error';
     let errors: unknown;
 
-    if (typeof resBody === 'string') {
-      message = resBody;
-    } else if (isRecord(resBody)) {
-      const maybe = resBody as ErrorResponse;
-      if (typeof maybe.message === 'string' || Array.isArray(maybe.message)) {
-        message = maybe.message;
-      }
-      if ('error' in maybe) {
-        errors = maybe.error;
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      const body = exception.getResponse();
+      if (typeof body === 'string') {
+        message = body;
+      } else if (isObject(body)) {
+        const err = body as HttpErrorBody;
+        if (typeof err.message === 'string' || Array.isArray(err.message)) {
+          message = err.message;
+        }
+
+        if ('error' in err) {
+          errors = err.error;
+        }
       }
     }
 
