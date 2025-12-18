@@ -4,9 +4,21 @@ import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
+import { requestIdMiddleware } from './common/middlewares/request-id.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // 设置helmet
+  app.use(helmet());
+  // 设置cors
+  app.enableCors({
+    origin: process.env.CORS_ORIGINS?.split(',') ?? ['http://localhost:3000'],
+    credentials: true,
+  });
+  // 请求头添加requestId
+  app.use(requestIdMiddleware);
 
   // 设置全局路由前缀
   app.setGlobalPrefix('api', {

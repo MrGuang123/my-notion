@@ -5,5 +5,6 @@ declare module 'express-serve-static-core' {
   interface Request {
     user?: { userId?: string; [key: string]: unknown };
     tenantId?: string;
+    requestId?: string;
   }
 }
