@@ -12,19 +12,22 @@ const { spawnSync } = require('node:child_process');
 const action = process.argv[2];
 const name = process.argv[3];
 const env = { ...process.env };
-if(!env.NODE_ENV) env.NODE_ENV = 'development';
+if (!env.NODE_ENV) env.NODE_ENV = 'development';
 
 const baseCmd = 'typeorm-ts-node-commonjs';
-const baseArgs = ['-d', 'src/database/data-source.ts'];
+const baseArgs = ['-d', 'src/infra/database/data-source.ts'];
 
-const run = args => {
-  const r = spawnSync(baseCmd, baseArgs.concat(args), { stdio: 'inherit', env });
+const run = (args) => {
+  const r = spawnSync(baseCmd, baseArgs.concat(args), {
+    stdio: 'inherit',
+    env,
+  });
   process.exit(r.status ?? 1);
-}
+};
 
-switch(action) {
+switch (action) {
   case 'gen':
-    if(!name) {
+    if (!name) {
       console.error('usage: yarn migration:gen <Name>');
       process.exit(1);
     }
@@ -40,3 +43,4 @@ switch(action) {
     console.error('usega: yarn migration:[gen|run|rev] [Name]');
     process.exit(1);
 }
+

@@ -10,6 +10,6 @@ const base = makeBaseTypeOrmConfig(process.env);
 // 执行migration需要的数据库实例
 export const AppDataSource = new DataSource({
   ...base,
-  entities: [path.join(__dirname, '../**/*.entity.{ts,js}')],
-  migrations: [path.join(__dirname, '../migrations/*.{ts,js}')],
+  entities: [path.join(__dirname, '../../**/*.entity.{ts,js}')],
+  migrations: [path.join(__dirname, '../../migrations/*.{ts,js}')],
 });

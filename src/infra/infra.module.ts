@@ -10,7 +10,9 @@ import { envSchema } from '../config/validation';
 import { makeBaseTypeOrmConfig } from './database/db-config';
 import { HealthModule } from './health/health.module';
 import { QueueModule } from './queue/queue.module';
+import { DiagnosticsModule } from './diagnostics/diagnostics.module';
 
+const isProd = process.env.NODE_ENV === 'production';
 const configFilePath = `.env.${process.env.NODE_ENV ?? 'development'}`;
 const typeOrmBaseConfig = makeBaseTypeOrmConfig(process.env);
 
@@ -57,6 +59,8 @@ const typeOrmBaseConfig = makeBaseTypeOrmConfig(process.env);
     }),
     HealthModule,
     QueueModule,
+    // 自检接口，生产环境禁用
+    ...(isProd ? [] : [DiagnosticsModule]),
   ],
   providers: [
     // 全局限流
