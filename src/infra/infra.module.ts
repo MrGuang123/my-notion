@@ -11,6 +11,7 @@ import { makeBaseTypeOrmConfig } from './database/db-config';
 import { HealthModule } from './health/health.module';
 import { QueueModule } from './queue/queue.module';
 import { DiagnosticsModule } from './diagnostics/diagnostics.module';
+import { JwtAuthGuard } from '../modules/auth/jwt-auth.guard';
 
 const isProd = process.env.NODE_ENV === 'production';
 const configFilePath = `.env.${process.env.NODE_ENV ?? 'development'}`;
@@ -67,6 +68,11 @@ const typeOrmBaseConfig = makeBaseTypeOrmConfig(process.env);
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    // 全局jwt鉴权，不需要鉴权的接口添加@Public()装饰器
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

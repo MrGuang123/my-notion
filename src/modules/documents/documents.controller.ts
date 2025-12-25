@@ -14,7 +14,7 @@ import {
 import { Request } from 'express';
 import { DocumentsService } from './documents.service';
 import { CreateDocumentDto } from './dtos/create-document.dto';
-import { TenantGuard } from '@/src/common/guards/tenant.guard';
+import { TenantGuard } from '../../common/guards/tenant.guard';
 import { DocumentQueryDto } from './dtos/document-query.dto';
 import { UpdateDocumentDto } from './dtos/update-document.dto';
 

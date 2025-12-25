@@ -1,4 +1,4 @@
-import { TenantGuard } from '@/src/common/guards/tenant.guard';
+import { TenantGuard } from '../../common/guards/tenant.guard';
 import {
   Body,
   Controller,

@@ -104,10 +104,14 @@ export class CommentsService {
     userId: string,
   ) {
     const key = `comment:rate:${tenantId}:${docId}:${userId}`;
+    // redis自增命令，如果存在就+1，不存在就设置0再加1，返回自增后的数字
     const count = await this.redis.incr(key);
     if (count === 1) {
+      // 保证并发安全，多个请求同时来，Redis也能正确计数
+      // 只在第一次计数时设置过期时间，在windowMs后自动清零，形成一个固定窗口
       await this.redis.pexpire(key, this.windowMs);
     }
+    // 当计数超过阈值，报错429
     if (count > this.limit) {
       throw new HttpException(
         'Too many comments',
