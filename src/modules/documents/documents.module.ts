@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import Redis from 'ioredis';
 import { DocumentsController } from './documents.controller';
 import { CommentsController } from './comments.controller';
 import { Document } from './entities/document.entity';
@@ -7,10 +8,10 @@ import { Comment } from './entities/comment.entity';
 import { DocumentsService } from './documents.service';
 import { CommentsService } from './comments.service';
 import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
+import { AuthzModule } from '../../common/authz.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Document, Comment])],
+  imports: [TypeOrmModule.forFeature([Document, Comment]), AuthzModule],
   controllers: [DocumentsController, CommentsController],
   providers: [
     DocumentsService,
