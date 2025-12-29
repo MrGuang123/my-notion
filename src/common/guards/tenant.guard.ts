@@ -27,7 +27,7 @@ export class TenantGuard implements CanActivate {
     if (isPublic) return true;
 
     const req = ctx.switchToHttp().getRequest<Request>();
-    const tenantId = this.resolveTenantId(req);
+    const tenantId = req.get('x-tenant-id') ?? undefined;
     if (!tenantId) {
       throw new ForbiddenException('Missing tenant id');
     }
@@ -47,21 +47,5 @@ export class TenantGuard implements CanActivate {
     req.tenantId = tenantId;
     req.tenantRole = membership.role;
     return true;
-  }
-
-  private resolveTenantId(req: Request): string | undefined {
-    const headerTenant = req.get('x-tenant-id');
-    if (headerTenant) return headerTenant;
-
-    const host = req.get('host') ?? '';
-    const hostWithoutPort = host.split(':')[0];
-    const parts = hostWithoutPort.split('.');
-    if (parts.length > 2 && parts[0] !== 'localhost') {
-      return parts[0];
-    }
-    if (parts.length >= 2 && hostWithoutPort.endsWith('localhost')) {
-      return parts[0];
-    }
-    return undefined;
   }
 }
