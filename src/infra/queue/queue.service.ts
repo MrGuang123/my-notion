@@ -6,10 +6,14 @@ import { Queue } from 'bullmq';
 export class QueueService {
   constructor(@InjectQueue('default') private readonly queue: Queue) {}
 
-  addDemoJob(payload: any) {
-    return this.queue.add('demo', payload, {
+  addJob(name: string, payload: any) {
+    return this.queue.add(name, payload, {
       attempts: 3,
       removeOnComplete: true,
+      backoff: {
+        type: 'exponential',
+        delay: 1000,
+      },
     });
   }
 }

@@ -38,7 +38,7 @@ export class AuthService {
     const existing = await this.userRepo.findOne({
       where: { email: dto.email },
     });
-    if (!existing) throw new ConflictException('Email already in use');
+    if (existing) throw new ConflictException('Email already in use');
 
     const passwordHash = await argon2.hash(dto.password, {
       type: argon2.argon2id,
@@ -127,7 +127,7 @@ export class AuthService {
       { secret: this.refreshSecret, expiresIn: '7d' },
     );
 
-    const decoded = this.jwt.decode(refreshToken) as { exp?: number } | null;
+    const decoded = this.jwt.decode(refreshToken);
     const expiresAt = decoded?.exp
       ? new Date(decoded.exp * 1000)
       : new Date(Date.now() * 7 * 24 * 60 * 60 * 1000);
