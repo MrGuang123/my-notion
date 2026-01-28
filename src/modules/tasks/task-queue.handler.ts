@@ -1,25 +1,31 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
+import { QueueHandler } from '../../infra/queue/unified.processor';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Job } from 'bullmq';
 import { TaskEvent } from './events/task-event.interface';
 import { NotificationType } from '../notifications/notification-type.enum';
 
 @Injectable()
-@Processor('default')
-export class TasksProcessor extends WorkerHost {
-  private readonly logger = new Logger(TasksProcessor.name);
+export class TaskQueueHandler implements QueueHandler {
+  private readonly logger = new Logger(TaskQueueHandler.name);
 
-  constructor(private readonly notificationsService: NotificationsService) {
-    super();
+  constructor(private readonly notificationsService: NotificationsService) {}
+
+  canHandle(jobName: string): boolean {
+    return jobName.startsWith('task.');
   }
 
-  async process(job: Job<TaskEvent>): Promise<void> {
+  async handle(job: Job<TaskEvent>): Promise<void> {
     const { name, data } = job;
-    this.logger.log(`Processing job ${name} with id ${job.id}`);
 
-    if (name === 'task.assigned') {
-      await this.handleTaskAssigned(data);
+    switch (name) {
+      case 'task.assigned':
+        await this.handleTaskAssigned(data);
+        break;
+      case 'task.updated':
+        break;
+      default:
+        this.logger.warn(`Unknown task job: ${name}`);
     }
   }
 

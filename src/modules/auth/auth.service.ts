@@ -16,6 +16,7 @@ import * as argon2 from 'argon2';
 import { TenantRole } from '../tenants/tenant-role';
 import { createHash } from 'crypto';
 import { LoginDto } from './dtos/login.dto';
+import type { JwtPayload } from './jwt.strategy';
 
 @Injectable()
 export class AuthService {
@@ -127,10 +128,10 @@ export class AuthService {
       { secret: this.refreshSecret, expiresIn: '7d' },
     );
 
-    const decoded = this.jwt.decode(refreshToken);
+    const decoded = this.jwt.decode<JwtPayload>(refreshToken);
     const expiresAt = decoded?.exp
       ? new Date(decoded.exp * 1000)
-      : new Date(Date.now() * 7 * 24 * 60 * 60 * 1000);
+      : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await this.refreshRepo.save(
       this.refreshRepo.create({
         userId,
