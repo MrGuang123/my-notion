@@ -14,7 +14,6 @@ export class Notification {
   @Column({
     type: 'varchar',
     length: 64,
-    name: 'user_id',
   })
   userId: string;
 
@@ -37,5 +36,5 @@ export class Notification {
   read: boolean;
 
   @CreateDateColumn()
-  createAt: Date;
+  createdAt: Date;
 }

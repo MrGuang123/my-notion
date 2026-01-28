@@ -46,7 +46,6 @@ export class Task {
   @Column({
     type: 'timestamptz',
     nullable: true,
-    name: 'due_date',
   })
   dueDate: Date | null;
 
@@ -54,7 +53,6 @@ export class Task {
     type: 'varchar',
     length: 64,
     nullable: true,
-    name: 'created_by',
   })
   createdBy: string | null;
 
