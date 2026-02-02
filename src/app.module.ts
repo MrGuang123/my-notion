@@ -8,6 +8,8 @@ import { UsersModule } from './modules/users/users.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     DocumentsModule,
     TasksModule,
     NotificationsModule,
+    ScheduleModule.forRoot(),
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
